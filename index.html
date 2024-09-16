@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Journal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        main {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 5px;
+        }
+        h1, h2 {
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 5px;
+        }
+        input[type="date"], textarea {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Digital Journal</h1>
+    </header>
+    <main>
+        <section id="entry-form">
+            <h2>New Entry</h2>
+            <form id="journal-form">
+                <label for="date">Date:</label>
+                <input type="date" id="date" name="date" required>
+                <label for="entry">Entry:</label>
+                <textarea name="entry" id="entry" rows="6" required></textarea>
+                <button type="submit">Add Entry</button>
+            </form>
+        </section>
+        <section id="entries">
+            <h2>Journal Entries</h2>
+            <ul id="entry-list"></ul>
+        </section>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('journal-form');
+            const entryList = document.getElementById('entry-list');
+
+            //Load existing entries from localStorage
+            const loadEntries = () => {
+                const entries = JSON.parse(localStorage.getItem('entries')) || [];
+                entries.forEach(entry => {
+                    addEntryToList(entry);
+                });
+            };
+
+            //Add a new entry to the list and save to localStorage
+            const addEntry = (date, entry) => {
+                const newEntry = {date, entry};
+                addEntryToList(newEntry);
+
+                const entries = JSON.parse(localStorage.getItem('entries')) || [];
+                entries.push(newEntry);
+                localStorage.setItem('entries', JSON.stringify(entries));
+            };
+
+            //Append an entry to the list
+            const addEntryToList = (entry) => {
+                const li = document.createElement('li');
+                li.innerHTML = `<strong>${entry.date}</strong><p>${entry.entry}</p>~`;
+                entryList.appendChild(li);
+            };
+
+            //Handle from submisson
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const date = document.getElementById('date').value;
+                const entry = document.getElementById('entry').value;
+                addEntry(date, entry);
+                form.reset();
+            });
+
+            loadEntries();
+        });
+    </script>
+</body>
+</html>
